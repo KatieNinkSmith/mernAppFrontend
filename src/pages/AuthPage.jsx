@@ -1,10 +1,28 @@
-import React from "react";
+import { useState } from "react";
+import SignUpForm from "../components/SignUpForm.jsx";
+import LoginForm from "../components/LoginForm.jsx";
 
-function AuthPage() {
+function AuthPage(props) {
+  const [signUp, setSignUp] = useState(true);
+
+  function togglePage() {
+    setSignUp(!signUp);
+  }
+
   return (
-    <div>
-      <h1>Auth</h1>
-    </div>
+    <>
+      <h1>Sign Up or Log In!</h1>
+      <>
+        {signUp ? (
+          <SignUpForm setUser={props.setUser} />
+        ) : (
+          <LoginForm setUser={props.setUser} />
+        )}
+      </>
+      Or go here to:
+      <br />
+      <button onClick={togglePage}>{signUp ? "Log In" : "Register"}</button>
+    </>
   );
 }
 

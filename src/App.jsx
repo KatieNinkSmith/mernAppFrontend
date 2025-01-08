@@ -9,14 +9,14 @@ import Nav from "./components/Nav";
 import "./App.css";
 
 function App() {
-  const [user, setUser] = useState("user");
+  const [user, setUser] = useState("");
 
   return (
     <>
       {user ? (
         <>
           <Nav />
-          <div> Hi! {user} </div>
+          <div> Hi! {user.name} </div>
           <h1>Calendar App!</h1>
           <Routes>
             <Route path="/" element={<Welcome />} />
@@ -26,7 +26,7 @@ function App() {
           </Routes>
         </>
       ) : (
-        <AuthPage />
+        <AuthPage setUser={setUser} />
       )}
     </>
   );

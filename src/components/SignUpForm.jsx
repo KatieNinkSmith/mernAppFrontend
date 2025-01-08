@@ -1,6 +1,8 @@
 import { useState } from "react";
+// adding in auth, i am importing SignUp from utilities
+import { signUp } from "../utilities/users-services";
 
-function SignUpForm() {
+function SignUpForm(props) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,9 +16,22 @@ function SignUpForm() {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    // ** this is where we will eventually add this to our database
+    // but through utilities/user - services (so im making util functions to handle api)
+    try {
+      // set this up to be able to add a new user
+      const submitData = { ...formData };
+      delete submitData.confirmPassword;
+      console.log(submitData);
+      const user = await signUp(submitData);
+      props.setUser(user);
+    } catch (err) {
+      // ! later add messages based on what actually failed
+      setError("Sign up failed - try again");
+    }
   };
 
   return (

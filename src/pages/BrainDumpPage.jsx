@@ -237,12 +237,7 @@ function BrainDumpPage() {
   return (
     <>
       <h1>Brain Dump</h1>
-      <ol>
-        CRUD
-        <li>Read - show all (which is have), the rest is future work</li>
-        <li>Update - from to edit a specific entry</li>
-        <li>Delete - button to delete an entry</li>
-      </ol>
+
       <div style={{ display: "flex", margin: "50px" }}>
         <div>
           <h3>Add a new entry</h3>
