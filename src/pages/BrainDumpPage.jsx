@@ -10,8 +10,15 @@ function BrainDumpPage() {
     entryType: "",
     description: "",
   });
-  const [update, setUpdate] = useState("");
-  const [entType, setEntType] = useState("");
+  const [entryUpdate, setEntryUpdate] = useState("");
+  const [entryType, setEntryType] = useState("");
+  // edit
+  const [editFormId, setEditFormId] = useState();
+  const [editedForm, setEditedForm] = useState({
+    entryDate: current,
+    entryType: "",
+    description: "",
+  });
 
   const LOCAL_URL = "http://localhost:5050";
 
@@ -30,25 +37,78 @@ function BrainDumpPage() {
 
   const addEntry = async (newEntry) => {
     let error = false;
-
+    let addedEntry = {};
     try {
       const response = await axios.post(`${LOCAL_URL}/api/braindump`, newEntry);
+      addedEntry = response.data;
     } catch (err) {
       error = true;
-      console.error(err);
+      console.log(err);
     } finally {
       if (error) {
-        setUpdate("there was an error");
+        setEntryUpdate("there was an error");
       } else {
-        // once i actually implement the post route in my backend, i will show the added entry
-        setUpdate("successfully added");
+        setEntryUpdate(
+          `Successfully Added ${addedEntry.entryType} - ${addedEntry.description}`
+        );
       }
     }
   };
 
+  const deleteEntry = async (id) => {
+    try {
+      const response = await axios.delete(`${LOCAL_URL}/api/braindump/${id}`);
+      console.log(response);
+      setEntryUpdate(`Successfully deleted entry: ${id}`);
+    } catch (err) {
+      console.error(err);
+      setEntryUpdate("delete failed");
+    }
+  };
+
+  const editEntry = async (id) => {
+    try {
+      const response = await axios.put(
+        `${LOCAL_URL}/api/braindump/${id}`,
+        editedForm
+      );
+      console.log(response);
+      setEntryUpdate(`Successfully updated entry: ${id}`);
+    } catch (err) {
+      console.error(err);
+      setEntryUpdate("edit failed");
+    }
+  };
+
+  const handleEdit = (date, type, description, id) => {
+    console.log(date, type, description, id); // *** all data is pulled
+    setEditFormId(id); // *** id is not getting set here
+    console.log("this is the edit id:", editFormId);
+    // edited form data
+    setEditedForm({
+      entryDate: date,
+      entryType: type,
+      description: description,
+    });
+
+    console.log(editedForm); // *** type and description are not getting pulled down,
+  };
+
+  const cancelEdit = () => {
+    setEditFormId(null); // Clear the edit form state
+    setEditedForm({ entryDate: current, entryType: "", description: "" }); // Reset the form
+  };
+
+  const handleDelete = (e, id) => {
+    console.log(`deleting... entry:`);
+    deleteEntry(id);
+    // add in function delete entry
+    console.log(e, id);
+  };
+
   useEffect(() => {
     getEntries();
-  }, []);
+  }, [entryUpdate]);
 
   const loaded = () => {
     return (
@@ -60,9 +120,63 @@ function BrainDumpPage() {
           margin: "50px",
         }}
       >
-        {entries.map((entry) => (
-          <li>
-            {entry.entryDate}: {entry.type}: {entry.description}
+        {entries.map((entry, index) => (
+          <li key={index}>
+            {editFormId === entry._id ? (
+              <>
+                <>
+                  <input
+                    type="date"
+                    name="entryDate"
+                    required
+                    onChange={handleEditChange}
+                    value={editedForm.entryDate}
+                  />
+                  <label>
+                    Choose the Entry Type
+                    <select
+                      name="entryType"
+                      value={editedForm.entryType}
+                      onChange={handleEditChange}
+                    >
+                      <option value="None"> </option>
+                      <option value="ToDo">To Do</option>
+                      <option value="Idea">Idea</option>
+                      <option value="Appt">Appt</option>
+                      <option value="Sched">Sched</option>
+                      <option value="List">List</option>
+                    </select>
+                  </label>
+                  <input
+                    type="text"
+                    name="description"
+                    required
+                    onChange={handleEditChange}
+                    value={editedForm.description}
+                  />
+                  <button onClick={(e) => editEntry(e, entry._id)}>Save</button>
+                  <button onClick={cancelEdit}>Cancel</button>
+                </>
+              </>
+            ) : (
+              <>
+                {entry.entryDate}: {entry.entryType} : {entry.description}
+                <button
+                  onClick={(e) =>
+                    handleEdit(
+                      entry.entryDate,
+                      entry.entryType,
+                      entry.description,
+                      entry._id
+                    )
+                  }
+                >
+                  Edit
+                </button>
+              </>
+            )}
+
+            <button onClick={(e) => handleDelete(e, entry._id)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -77,18 +191,29 @@ function BrainDumpPage() {
     console.log(formData);
     newEntry = {
       entryDate: formData.entryDate,
-      enrtyType: entType,
+      entryType: entryType || "None",
       description: formData.description,
     };
     addEntry(newEntry);
+    console.log(newEntry);
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleTypeSelct = (e) => {
-    setEntType(e.target.value);
+  // This function is called when the user changes any input field (date, type, description)
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    // Update only the field that changed (keeping others intact)
+    setEditedForm((prevForm) => ({
+      ...prevForm, // Keep the previous values intact
+      [name]: value, // Update the specific field that changed
+    }));
+  };
+
+  const handleTypeSelect = (e) => {
+    setEntryType(e.target.value);
   };
 
   const loading = () => {
@@ -99,9 +224,7 @@ function BrainDumpPage() {
     <>
       <h1>Brain Dump</h1>
       <ol>
-        {" "}
         CRUD
-        <li>Create - for to add new entry</li>
         <li>Read - show all (which is have), the rest is future work</li>
         <li>Update - from to edit a specific entry</li>
         <li>Delete - button to delete an entry</li>
@@ -119,7 +242,7 @@ function BrainDumpPage() {
             />
             <label>
               Choose the entry Type
-              <select value={entType} onChange={handleTypeSelct}>
+              <select value={entryType} onChange={handleTypeSelect}>
                 <option value="None"></option>
                 <option value="ToDo">To Do</option>
                 <option value="Idea">Idea</option>
@@ -137,7 +260,7 @@ function BrainDumpPage() {
             />
             <input type="submit" value="Add a new entry" />
           </form>
-          <p>{update}</p>
+          <p>{entryUpdate}</p>
         </div>
         <div>{entries.length ? loaded() : loading()}</div>
       </div>
