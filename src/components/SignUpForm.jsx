@@ -27,6 +27,7 @@ function SignUpForm(props) {
       delete submitData.confirmPassword;
       console.log(submitData);
       const user = await signUp(submitData);
+      console.log(user);
       props.setUser(user);
     } catch (err) {
       // ! later add messages based on what actually failed
