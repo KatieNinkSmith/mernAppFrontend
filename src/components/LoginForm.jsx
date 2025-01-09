@@ -16,6 +16,7 @@ function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefalut();
+    const credentials = { ...formData };
     try {
       // the promise returned by the login service method will resolve to the user
       // object includes in the payload of the JWT
@@ -29,7 +30,7 @@ function LoginForm() {
       <h1>Log In to see your own Calendar</h1>
       <div>
         <form autoComplete="off" onSubmit={handleSubmit}>
-          <label>Email address (needs to be unique)</label>
+          <label>Email address</label>
           <br />
           <input
             type="email"
@@ -41,6 +42,7 @@ function LoginForm() {
           />
           <br />
           <label>Password</label>
+          <br />
           <input
             type="password"
             name="password"

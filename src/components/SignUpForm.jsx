@@ -41,6 +41,7 @@ function SignUpForm(props) {
       <div>
         <form autoComplete="off" onSubmit={handleSubmit}>
           <label>Display name:</label>
+          <br />
           <input
             type="text"
             name="name"
@@ -62,6 +63,7 @@ function SignUpForm(props) {
           />
           <br />
           <label>Password</label>
+          <br />
           <input
             type="password"
             name="password"
@@ -72,6 +74,7 @@ function SignUpForm(props) {
           />
           <br />
           <label>Confirm Password</label>
+          <br />
           <input
             type="password"
             name="confirmPassword"

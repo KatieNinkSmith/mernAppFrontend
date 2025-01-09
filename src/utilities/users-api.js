@@ -23,3 +23,18 @@ export async function signUp(userData) {
     throw new Error("Invalid Sign Up");
   }
 }
+
+export async function login(credentials) {
+  const res = await fetch(URL + "/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  // check if successfuk
+  if (res.ok) {
+    // this will resolve to the JWT
+    return res.json();
+  } else {
+    throw new Error("Invaled Log In");
+  }
+}
