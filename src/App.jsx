@@ -7,9 +7,10 @@ import TodoPage from "./pages/TodoPage";
 import Welcome from "./pages/Welcome";
 import Nav from "./components/Nav";
 import "./App.css";
+import { getUser } from "./utilities/users-services";
 
 function App() {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(getUser());
 
   return (
     <>
