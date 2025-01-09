@@ -1,7 +1,7 @@
 import { useState } from "react";
 import userServices from "../utilities/users-services";
 
-function LoginForm() {
+function LoginForm({ setUser }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,12 +15,15 @@ function LoginForm() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefalut();
+    e.preventDefault();
     const credentials = { ...formData };
+    console.log(credentials);
     try {
       // the promise returned by the login service method will resolve to the user
       // object includes in the payload of the JWT
       const user = await userServices.login(credentials);
+      console.log(user);
+      setUser(user);
     } catch (err) {
       setError("Log in Failed - Try Again");
     }
