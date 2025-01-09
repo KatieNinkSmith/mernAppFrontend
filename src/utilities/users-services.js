@@ -37,3 +37,7 @@ export function getUser() {
   return token ? JSON.parse(atob(token.split(".")[1])).user : null;
   // return the name and email from the payload
 }
+
+export function logOut() {
+  localStorage.removeItem("token");
+}
