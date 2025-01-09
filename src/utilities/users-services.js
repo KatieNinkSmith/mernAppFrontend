@@ -14,6 +14,14 @@ export async function signUp(userData) {
   return getUser();
 }
 
+export async function login(credentials) {
+  const token = await usersAPI.login(credentials);
+
+  // persist the token
+  localStorage.setItem("token", token);
+  return getUser();
+}
+
 export function getToken() {
   // getItem returns null if there is no string in the key "token" or the key doesnt exist
   const token = localStorage.getItem("token");
@@ -41,3 +49,5 @@ export function getUser() {
 export function logOut() {
   localStorage.removeItem("token");
 }
+
+export default { login };

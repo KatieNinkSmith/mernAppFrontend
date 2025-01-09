@@ -67,7 +67,7 @@ function SignUpForm(props) {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Display password"
+            placeholder="Password"
             required
           />
           <br />
@@ -88,6 +88,7 @@ function SignUpForm(props) {
             SIGN UP now
           </button>
         </form>
+        <p>{error}</p>
       </div>
     </>
   );
